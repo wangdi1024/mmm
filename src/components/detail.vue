@@ -59,7 +59,7 @@
                                         <dd>
                                             <div id="buyButton" class="btn-buy">
                                                 <button onclick="cartAdd(this,'/',1,'/shopping.html');" class="buy">立即购买</button>
-                                                <button onclick="cartAdd(this,'/',0,'/cart.html');" class="add">加入购物车</button>
+                                                <button @click="addcart" class="add">加入购物车</button>
                                             </div>
                                         </dd>
                                     </dl>
@@ -168,10 +168,7 @@ export default {
       neirong: '',
       images: {
         // required 必须
-        normal_size: [
-        
-         
-        ],
+        normal_size: [],
       },
       zoomerOptions: {
         zoomFactor: 3,
@@ -186,7 +183,7 @@ export default {
   },
   methods: {
     handleChange(value) {
-    //   console.log(value);
+      //   console.log(value);
     },
     //初始化数据,由于侦听器不能直接调用create()函数,所以写在methods里面 在用this调用
     initdata() {
@@ -197,15 +194,15 @@ export default {
           `http://111.230.232.110:8899/site/goods/getgoodsinfo/${this.artID}`
         )
         .then(result => {
-          console.log(result);
+        //   console.log(result);
           this.goodsinfo = result.data.message.goodsinfo;
           this.hotgoodslist = result.data.message.hotgoodslist;
           this.imglist = result.data.message.imglist;
           this.imglist.forEach(v => {
-              this.images.normal_size.push({
-                  id:v.id,
-                  url:v.original_path
-              })
+            this.images.normal_size.push({
+              id: v.id,
+              url: v.original_path,
+            });
           });
         });
       this.initcoment();
@@ -218,7 +215,7 @@ export default {
           }?pageIndex=${this.pageIndex}&pageSize=10`
         )
         .then(result => {
-        //   console.log(result);
+          //   console.log(result);
           this.comment = result.data.message;
           //   console.log(this.comment);
           this.totalcount = result.data.totalcount;
@@ -253,19 +250,26 @@ export default {
           });
       }
     },
+    addcart() {
+       this.$store.commit('add2cart',{
+            goodId:this.artID,
+            goodNum:this.num7
+        })
+    },
   },
   created() {
     this.initdata();
-    // 让放大镜的组件为空,重新生成
-    this.images.normal_size=[];
+    
+    // console.log(this.$store.state.count);
   },
   //侦听器 要侦听谁就写谁 ,这里写的是$route 因为router-link :to过来的id存在$route中
   watch: {
     // 如果 `$route` 发生改变，这个函数就会运行
     $route(newVal, oldVal) {
       //  console.log('变了');
+      // 让放大镜的组件为空,重新生成
+    this.images.normal_size = [];
       this.initdata();
-      
     },
   },
 };
@@ -275,21 +279,21 @@ export default {
   vertical-align: middle;
   max-width: 100%;
 }
-.zoomer-zoomer-box img{
-    width: 100px;
-    height: 100px;
+.zoomer-zoomer-box img {
+  width: 100px;
+  height: 100px;
 }
-.preview-box img{
-    width: 395px;
-    height: 395px;
-    /* height: 320px; */
+.preview-box img {
+  width: 395px;
+  height: 395px;
+  /* height: 320px; */
 }
-#zoomer-pane-container{
-    width: 395px !important; 
-    height: 395px !important;
-     left: 400px !important; 
-     top: 30px !important; 
-     z-index: 2;
+#zoomer-pane-container {
+  width: 510px !important;
+  height: 500px !important;
+  left: 400px !important;
+  top: 30px !important;
+  z-index: 2;
 }
 </style>
 
